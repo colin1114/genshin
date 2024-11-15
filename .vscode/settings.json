@@ -1,0 +1,20 @@
+{
+    "workbench.colorTheme": "Default Light Modern",
+    "security.workspace.trust.untrustedFiles": "open",
+    "explorer.confirmDelete": false,
+    "editor.fontSize": 19,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.fontWeight": "bold",
+    "workbench.iconTheme": "vscode-great-icons",
+    "database-client.terminalTheme": "Ubuntu",
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "editor.fontFamily": "Cascadia Code",
+    "files.associations": {
+        "iostream": "cpp",
+        "iosfwd": "cpp"
+    }, 
+    "editor.cursorSmoothCaretAnimation": "on",
+    "C_Cpp.errorSquiggles": "enabled"
+}
