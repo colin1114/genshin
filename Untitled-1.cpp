@@ -1,35 +1,33 @@
 #include <bits/stdc++.h>
-#define ll long long
+#define ll unsigned long long
 #define endl '\n'
 
 using namespace std;
 const int E = 1e6 + 5;
+const int Base = 31;
 string a, b;
 int main()
 {
     cin >> a >> b;
-    ll len = b.length();
-    reverse(a.begin(), a.end());
-    reverse(b.begin(), b.end());
-    ll cnt = 0;
-    map<ll, bool> mp;
-    ll cnt1 = -1;
+    ll len1 = b.length();
+    ll len = a.length();
     while (1)
     {
-        cnt1++;
+    con:;
         ll x = a.find(b);
         if (x == string::npos)
             break;
-        cout << x << ' ' << cnt1 << ' ' << a << endl;
-        if (mp[x + cnt1])
-        {
-            a.pop_back();
-            continue;
-        }
-        mp[x + cnt1] = 1;
-        a.pop_back();
-        cnt++;
+        bitset<E> vis;
+        for (int i = 0; i < len1; i++)
+            vis[i + x - 1] = 1;
+        string tmp = "";
+        for (int i = 0; i < len; i++)
+            if (!vis[i])
+                tmp += a[i];
+        a = tmp;
+        len = a.length();
+        goto con;
     }
-    cout << cnt;
+    cout << a;
     return 0;
 }
