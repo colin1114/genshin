@@ -13,7 +13,13 @@
     "editor.fontFamily": "Cascadia Code",
     "files.associations": {
         "iostream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "bits/stdc++.h": "cpp"
     }, 
     "editor.cursorSmoothCaretAnimation": "on",
     "C_Cpp.errorSquiggles": "enabled"
