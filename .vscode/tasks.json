@@ -5,7 +5,6 @@
             "label": "C++",
             "command": "g++",
             "args": [
-                "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "-o",

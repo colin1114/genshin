@@ -4,53 +4,39 @@
 
 using namespace std;
 const int E = 1e6 + 5;
-string a, b;
-ll ans;
+ll n;
+string s;
 inline void get_nxt(string &s, vector<ll> &nxt)
 {
-    nxt.resize(s.size());
-    nxt[0] = -1;
-    ll i = 0, j = -1;
-    while (i < s.length())
+    nxt.resize(s.size() + 5);
+    nxt[1] = 0;
+    ll j = 0;
+    for (int i = 2; i <= n; i++)
     {
-        if (j == -1 || s[i] == s[j])
-        {
-            i++;
-            j++;
-            if (s[i] == s[j])
-                nxt[i] = nxt[j];
-            else
-                nxt[i] = j;
-        }
-        else
+        while (j > 0 && s[j + 1] != s[i])
             j = nxt[j];
-    }
-}
-inline ll kmp(string &f, string &s, const vector<ll> &nxt)
-{
-    ll i = 0, j = 0;
-    while (i < f.size())
-    {
-        if (j == -1 || f[i] == s[j])
-        {
-            i++;
+        if (s[j + 1] == s[i])
             j++;
-            if (j == s.size())
-                return (i - s.size());
-        }
-        else
-            j = nxt[j];
+        nxt[i] = j;
     }
-    return -1;
 }
 int main()
 {
-    cin >> a >> b;
-    vector<ll> nxt(b.size() + 1);
-    get_nxt(b, nxt);
-    ll x = kmp(a, b, nxt);
-    cout << (x != -1 ? "yes\n" : "no\n");
-    if (x != -1)
-        cout << x;
+    ll cnt = 0;
+    while (1)
+    {
+        vector<ll> nxt;
+        cin >> n;
+        if (n == 0)
+            break;
+        cin >> s;
+        s = ' ' + s;
+        get_nxt(s, nxt);
+        cout << "Test case #" << ++cnt << endl;
+        for (int i = 2; i <= n; i++)
+            if (i % (i - nxt[i]) == 0 && i / (i - nxt[i]) > 1)
+                cout << i << ' ' << i / (i - nxt[i]) << endl;
+        cout << endl;
+    }
     return 0;
 }
