@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
-#define ll unsigned long long
+#define ll long long
 #define endl '\n'
 
 using namespace std;
 const int E = 1e6 + 5;
-const int Base = 31;
 string a, b;
+ll ans;
 inline void get_nxt(string &s, vector<ll> &nxt)
 {
     nxt.resize(s.size());
@@ -28,7 +28,7 @@ inline void get_nxt(string &s, vector<ll> &nxt)
 }
 inline ll kmp(string &f, string &s, const vector<ll> &nxt)
 {
-    int i = 0, j = 0;
+    ll i = 0, j = 0;
     while (i < f.size())
     {
         if (j == -1 || f[i] == s[j])
@@ -41,33 +41,16 @@ inline ll kmp(string &f, string &s, const vector<ll> &nxt)
         else
             j = nxt[j];
     }
-    // cout << ans;
     return -1;
 }
 int main()
 {
     cin >> a >> b;
-    ll len1 = b.length();
-    ll len = a.length();
     vector<ll> nxt(b.size() + 1);
     get_nxt(b, nxt);
-    while (1)
-    {
-    con:;
-        ll x = kmp(a, b, nxt);
-        if (x == -1)
-            break;
-        bitset<E> vis;
-        for (int i = 0; i < len1; i++)
-            vis[i + x] = 1;
-        string tmp = "";
-        for (int i = 0; i < len; i++)
-            if (!vis[i])
-                tmp += a[i];
-        a = tmp;
-        len -= len1;
-        goto con;
-    }
-    cout << a;
+    ll x = kmp(a, b, nxt);
+    cout << (x != -1 ? "yes\n" : "no\n");
+    if (x != -1)
+        cout << x;
     return 0;
 }
