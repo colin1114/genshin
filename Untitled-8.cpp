@@ -18,6 +18,6 @@ inline void unite(ll x, ll y)
 }
 int main()
 {
-
+    
     return 0;
 }
