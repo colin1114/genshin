@@ -1,26 +1,28 @@
-import asyncio
-from playwright.async_api import async_playwright
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
 
-async def submit_form():
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)  # 启动无头浏览器
-        page = await browser.new_page()
+# 启动浏览器
+driver = webdriver.Chrome()
 
-        # 循环访问 note.ms/1 到 note.ms/200
-        for i in range(1, 201):
-            url = f'http://note.ms/{i}'
-            await page.goto(url)
+try:
+    # 循环访问 note.ms/1 到 note.ms/200
+    for i in range(1, 201):
+        url = f'http://note.ms/{i}'
+        driver.get(url)
 
-            # 填写表单内容
-            await page.fill('.content', 'hello')
+        # 填写表单
+        textarea = driver.find_element(By.CLASS_NAME, 'content')  # 根据实际的 HTML 结构调整定位
+        textarea.clear()
+        textarea.send_keys("hello")
 
-            # 提交表单
-            await page.click('button[name="submit"]')
+        # 提交表单（假设有提交按钮）
+        submit_button = driver.find_element(By.NAME, 'submit')  # 根据实际按钮的属性替换
+        submit_button.click()
 
-            print(f"Successfully submitted 'hello' to {url}.")
-            await asyncio.sleep(1)  # 保持页面打开1秒
+        print(f"Successfully submitted 'hello' to {url}.")
+        time.sleep(1)  # 保持页面打开1秒
 
-        await browser.close()
-
-# 运行
-asyncio.run(submit_form())
+finally:
+    # 关闭浏览器
+    driver.quit()
