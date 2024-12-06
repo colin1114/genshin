@@ -1,0 +1,1 @@
+{"name":"Local: tmp","url":"c:\\Users\\hf01\\Documents\\genshin\\tmp.cpp","tests":[{"id":1733483946724,"input":"10 5\n1 2\n1 3\n1 4\n2 5\n2 6\n4 7\n4 8\n7 9\n8 10\n2 4\n5 3\n8 9\n1 10\n5 6\n","output":"1\n1\n4\n1\n2\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\hf01\\Documents\\genshin\\tmp.cpp","group":"local","local":true}
