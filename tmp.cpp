@@ -8,7 +8,7 @@
 
 using namespace std;
 const int E = 1e6 + 5;
-
+ll n, m, s, t;
 int main()
 {
     
