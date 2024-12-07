@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # 启动浏览器
-driver = webdriver.Chrome("C:\\Users\\hf01\\Music\\chromedriver.exe")
+driver = webdriver.Chrome()
 
 # 设置隐式等待，等待最多 10 秒
 driver.implicitly_wait(1.2)
