@@ -1,5 +1,5 @@
 {
-    "workbench.colorTheme": "Default Light Modern",
+    "workbench.colorTheme": "Monokai",
     "security.workspace.trust.untrustedFiles": "open",
     "explorer.confirmDelete": false,
     "editor.fontSize": 19,
