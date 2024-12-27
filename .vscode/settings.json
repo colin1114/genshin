@@ -19,7 +19,8 @@
         "list": "cpp",
         "string": "cpp",
         "vector": "cpp",
-        "bits/stdc++.h": "cpp"
+        "bits/stdc++.h": "cpp",
+        "#define": "cpp"
     }, 
     "editor.cursorSmoothCaretAnimation": "on",
     "C_Cpp.errorSquiggles": "enabled"
