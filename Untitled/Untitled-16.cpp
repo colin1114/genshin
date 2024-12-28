@@ -56,6 +56,9 @@ inline ll query(ll l, ll r, ll rt)
 }
 int main()
 {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
     cin >> n;
     for (int i = 1; i <= n; i++)
         cin >> a[i];
@@ -74,7 +77,7 @@ int main()
                 if (a[i] < 0)
                 {
                     ll j = i;
-                    while (j)
+                    while (1)
                     {
                         j++;
                         if (j > y || a[j] > 0)
@@ -82,6 +85,8 @@ int main()
                     }
                     id.push_back({i, j - 1});
                 }
+            // for (auto v : id)
+            //     cout << v.x << ' ' << v.y << endl;
             vector<PII> s;
             if (id.size() == 0)
                 s.push_back({x, y});
@@ -89,15 +94,33 @@ int main()
                 s.push_back({x, y});
             else
             {
-                ll l = x;
+                ll i = x, l;
+                while (1)
+                {
+                    if (a[i] > 0)
+                    {
+                        l = i;
+                        break;
+                    }
+                    i++;
+                }
                 for (auto v : id)
-                    s.push_back({l, v.x - 1}), l = v.y + 1;
+                {
+                    if (l > v.x - 1)
+                        continue;
+                    s.push_back({l, v.x - 1});
+                    l = v.y + 1;
+                }
                 if (l <= y)
                     s.push_back({l, y});
+                if (s.size() == 0)
+                    s.push_back({x, y});
             }
-            ll ans = 0;
+            // cerr << "OK 6\n";
+            ll ans = -1e18;
             for (auto v : s)
-                ans = max(ans, query(v.x, v.y, 1)), cout << v.x << ' ' << v.y << endl;
+                ans = max(ans, query(v.x, v.y, 1));
+            // cerr << "OK 7\n";
             cout << ans << endl;
         }
     }
