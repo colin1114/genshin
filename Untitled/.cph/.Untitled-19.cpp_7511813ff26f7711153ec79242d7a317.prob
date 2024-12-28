@@ -1,0 +1,1 @@
+{"name":"Local: Untitled-19","url":"c:\\Users\\hf01\\Documents\\genshin\\Untitled\\Untitled-19.cpp","tests":[{"id":1735352721355,"input":"3 3 2 2\n111\n000\n111\n3\n11\n00\n11\n11\n00\n11\n","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\hf01\\Documents\\genshin\\Untitled\\Untitled-19.cpp","group":"local","local":true}
