@@ -71,7 +71,6 @@ int main()
         {
             vector<PII> id;
             for (int i = x; i <= y; i++)
-            {
                 if (a[i] < 0)
                 {
                     ll j = i;
@@ -81,9 +80,25 @@ int main()
                         if (j > y || a[j] > 0)
                             break;
                     }
-                    cout << i << ' ' << j << endl;
+                    id.push_back({i, j - 1});
                 }
+            vector<PII> s;
+            if (id.size() == 0)
+                s.push_back({x, y});
+            else if (x == y || (id.size() == 1 && id[0].x == x && id[0].y == y))
+                s.push_back({x, y});
+            else
+            {
+                ll l = x;
+                for (auto v : id)
+                    s.push_back({l, v.x - 1}), l = v.y + 1;
+                if (l <= y)
+                    s.push_back({l, y});
             }
+            ll ans = 0;
+            for (auto v : s)
+                ans = max(ans, query(v.x, v.y, 1)), cout << v.x << ' ' << v.y << endl;
+            cout << ans << endl;
         }
     }
     return 0;
