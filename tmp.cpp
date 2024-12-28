@@ -1,115 +1,93 @@
 #include <bits/stdc++.h>
 #define endl '\n'
+
 #define ll long long
 
 #define PII pair<ll, ll>
+
 #define x first
+
 #define y second
 
 using namespace std;
 const int E = 1e6 + 5;
-ll n, m, s, ans;
-vector<ll> edge[E];
-ll fa[E], dep[E], a[E];
-ll dp[105][E];
-bool vis[E];
-inline void dfs(ll u, ll fa = 0)
+ll n, m;
+ll a[E];
+struct node
 {
-    dep[u] = dep[fa] + 1;
-    dp[0][u] = fa;
-    for (auto v : edge[u])
-        if (v != fa)
-            dfs(v, u);
-    return;
+    ll l, r, s, data;
+} tree[E << 2];
+inline node merge(node u, node v)
+{
+    node ans;
+    ans.s = u.s + v.s;
+    ans.l = max(u.l, u.s + v.l);
+    ans.r = max(v.r, v.s + u.r);
+    ans.data = max(max(u.data, v.data), u.r + v.l);
+    return ans;
 }
-inline void init()
+inline void build(ll l, ll r, ll id)
 {
-    for (int i = 1; i < n; i++)
+    tree[id].l = tree[id].r = tree[id].s = tree[id].data = 0;
+    if (l == r)
     {
-        ll x, y;
-        cin >> x >> y;
-        edge[x].push_back(y);
-        edge[y].push_back(x);
+        tree[id].l = tree[id].r = tree[id].s = tree[id].data = a[l];
+        return;
     }
-    dep[1] = 1;
-    dfs(1);
-    for (int i = 1; i <= 20; i++)
-        for (int j = 1; j <= n; j++)
-            dp[i][j] = dp[i - 1][dp[i - 1][j]];
-
-    // for (int i = 1; i <= 20; i++)
-    //     for (int j = 1; j <= n; j++)
-    //         // cerr << dp[i][j] << ' ';
-
-    for (int i = 1; i < E; i++)
-        fa[i] = i;
+    ll mid = (l + r) >> 1;
+    build(l, mid, id << 1);
+    build(mid + 1, r, id << 1 | 1);
+    tree[id] = merge(tree[id << 1], tree[id << 1 | 1]);
 }
-inline ll find(ll x)
+inline void modify(ll x, ll l, ll r)
 {
-    return x == fa[x] ? x : fa[x] = find(fa[x]);
-}
-inline void unite(ll x, ll y)
-{
-    fa[find(y)] = find(x);
-}
-inline ll lca(ll x, ll y)
-{
-    if (dep[x] < dep[y])
-        swap(x, y);
-    for (int i = 20; i >= 0; i--)
-        if (dep[dp[i][x]] >= dep[y])
-            x = dp[i][x];
-    if (x == y)
-        return x;
-    for (int i = 20; i >= 0; i--)
-        if (dp[i][x] != dp[i][y])
-            x = dp[i][x], y = dp[i][y];
-    return dp[0][x];
-}
-inline void dfs1(ll u, ll fa)
-{
-    vis[u] = 1;
-    auto p = find(u), q = find(fa);
-    while (p != q)
+    if (l == r)
     {
-        // // cerr << p << ' ' << q << endl;
-        // // cerr << (p == q) << endl;
-        unite(dp[0][p], p);
-        p = find(p);
-        vis[p] = 1;
+        tree[x].l = tree[x].r = tree[x].s = tree[x].data = a[l];
+        return;
     }
-    // // cerr << endl;
+    ll mid = (l + r) >> 1;
+    modify(x << 1, l, mid);
+    modify(x << 1 | 1, mid + 1, r);
+    tree[x] = merge(tree[x << 1], tree[x << 1 | 1]);
 }
-inline ll get(ll x, ll y)
+inline node query(ll x, ll l, ll r, ll u, ll v)
 {
-    return llabs(dep[x] - dep[y]);
+    if (u <= l && r <= v)
+        return tree[x];
+    ll mid = (l + r) >> 1;
+    node p, q;
+    if (u <= mid)
+        p = query(x << 1, l, mid, u, v);
+    if (v > mid)
+        q = query(x << 1 | 1, mid + 1, r, u, v);
+    if (v <= mid)
+        return p;
+    if (u > mid)
+        return q;
+    return merge(p, q);
 }
 int main()
 {
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    cin >> n >> m >> s;
-    init();
-    for (int i = 1; i <= m; i++)
+    cin >> n;
+    for (int i = 1; i <= n; i++)
         cin >> a[i];
-    vis[s] = 1;
-    for (int i = 1; i <= m; i++)
-        if (!vis[a[i]])
+    build(1, n, 1);
+    cin >> m;
+    while (m--)
+    {
+        ll op, x, y;
+        cin >> op >> x >> y;
+        if (op == 1)
         {
-            // cerr << "Yes" << ' ' << s << endl;
-            ll x = lca(s, a[i]);
-            // cerr << "ok 1" << endl;
-            ans += get(s, x);
-            // cerr << "ok 2" << endl;
-            ans += get(a[i], x);
-            // cerr << "ok 3" << endl;
-            dfs1(s, x);
-            // cerr << "ok 4" << endl;
-            dfs1(a[i], x);
-            // cerr << "ok 5" << endl;
-            s = a[i];
+            a[x] = y;
+            modify(1, 1, n);
         }
-    cout << ans;
+        else
+            cout << query(1, 1, n, x, y).data << endl;
+    }
     return 0;
 }
