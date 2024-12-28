@@ -38,6 +38,7 @@ int main()
         cerr << "OK 3\n";
         ans = ans * (2 * s + 1) % mod;
     }
-    cout << ans;
+    cout << endl;
+    
     return 0;
 }
