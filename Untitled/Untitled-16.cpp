@@ -26,7 +26,7 @@ inline void build(ll l, ll r, ll rt)
     ll mid = l + r >> 1;
     build(l, mid, rt << 1);
     build(mid + 1, r, rt << 1 | 1);
-    tree[rt].data = max(tree[rt << 1].data, tree[rt << 1 | 1].data);
+    tree[rt].data = tree[rt << 1].data + tree[rt << 1 | 1].data;
 }
 inline void modify(ll x, ll dat, ll rt)
 {
@@ -40,7 +40,7 @@ inline void modify(ll x, ll dat, ll rt)
         modify(x, dat, rt << 1);
     else
         modify(x, dat, rt << 1 | 1);
-    tree[rt].data = max(tree[rt << 1].data, tree[rt << 1 | 1].data);
+    tree[rt].data = tree[rt << 1].data + tree[rt << 1 | 1].data;
 }
 inline ll query(ll l, ll r, ll rt)
 {
@@ -52,22 +52,39 @@ inline ll query(ll l, ll r, ll rt)
     else if (mid + 1 <= l)
         return query(l, r, rt << 1 | 1);
     else
-        return max(query(l, mid, rt << 1), query(mid + 1, r, rt << 1 | 1));
+        return query(l, mid, rt << 1) + query(mid + 1, r, rt << 1 | 1);
 }
 int main()
 {
-    cin >> n >> q;
+    cin >> n;
     for (int i = 1; i <= n; i++)
         cin >> a[i];
+    cin >> q;
     build(1, n, 1);
     while (q--)
     {
         ll op, x, y;
         cin >> op >> x >> y;
         if (op == 1)
-            modify(x, y, 1);
+            modify(x, y, 1), a[x] = y;
         else
-            cout << query(x, y, 1) << endl;
+        {
+            vector<PII> id;
+            for (int i = x; i <= y; i++)
+            {
+                if (a[i] < 0)
+                {
+                    ll j = i;
+                    while (j)
+                    {
+                        j++;
+                        if (j > y || a[j] > 0)
+                            break;
+                    }
+                    cout << i << ' ' << j << endl;
+                }
+            }
+        }
     }
     return 0;
 }
