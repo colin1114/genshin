@@ -1,12 +1,16 @@
-import httpx
-client=httpx.Client(http2=True) #重点：要用HTTP2
-website="https://note.ms/"
-i=1000
-while True:
-    while i<2000:
-        form={"t":"走出大山，走进深山"}
-        header={"Referer":website+str(i)} #另一个重点：一样的Referer
-        client.post(website+str(i),data=form,headers=header)
-        print(i)
-        i=i+1
-    i=1000
+import cv2
+
+# 读取二维码图片
+image = cv2.imread('sb.png')
+
+# 创建二维码解码器
+detector = cv2.QRCodeDetector()
+
+# 解码
+value, pts, qr_code = detector(image)
+
+# 输出解码结果
+if value:
+    print("Decoded value:", value)
+else:
+    print("QRCode not detected.")
