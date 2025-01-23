@@ -12,7 +12,7 @@ const int E = 1e6 + 5;
 struct node
 {
     ll d, lazy, lazy1;
-} ns[E * 4];
+} ns[E * 8];
 ll n, m;
 
 // inline void update(ll rt)
@@ -35,31 +35,32 @@ ll n, m;
 
 inline void fx(ll rt, ll k)
 {
-    ns[rt].lazy = min(ns[rt].lazy, k);
+    ns[rt].lazy = max(ns[rt].lazy, k);
     ns[rt].lazy1 = max(ns[rt].lazy1, k);
 }
 
 inline void fy(ll rt, ll k)
 {
-    ns[rt].lazy = max(ns[rt].lazy, k);
+    ns[rt].lazy = min(ns[rt].lazy, k);
     ns[rt].lazy1 = min(ns[rt].lazy1, k);
 }
 
-inline void push_down(ll rt, ll l, ll r)
-{
-    fx(rt * 2, ns[rt].lazy);
-    fx(rt * 2 + 1, ns[rt].lazy);
-    fy(rt * 2, ns[rt].lazy1);
-    fy(rt * 2 + 1, ns[rt].lazy1);
+inline void push_down(ll rt, ll l, ll r) // min:lazy
+{                                        // max:lazy1
+    fx(rt * 2, ns[rt].lazy1);
+    fx(rt * 2 + 1, ns[rt].lazy1);
+    fy(rt * 2, ns[rt].lazy);
+    fy(rt * 2 + 1, ns[rt].lazy);
     ns[rt].lazy1 = 0;
     ns[rt].lazy = 1e18;
 }
 
 inline void query(ll rt, ll l, ll r)
 {
+
     if (l == r)
     {
-        cout << ns[rt].lazy << endl;
+        cout << ns[rt].lazy1 << endl;
         return;
     }
     push_down(rt, l, r);
@@ -70,12 +71,13 @@ inline void query(ll rt, ll l, ll r)
 
 inline void modily(ll rt, ll v, ll l, ll r, ll cl, ll cr, bool tags)
 {
-    if (cl >= l && cr <= r)
+    // cerr << cl << ' ' << cr << endl;
+    if (l <= cl && cr <= r)
     {
-        if (tags)
-            fy(rt, v);
-        else
+        if (tags == 0)
             fx(rt, v);
+        else
+            fy(rt, v);
         return;
     }
     push_down(rt, cl, cr);
@@ -96,9 +98,9 @@ int main()
         ll op, l, r, h;
         cin >> op >> l >> r >> h;
         if (op == 1)
-            modily(1, h, l - 1, r - 1, 0, n - 1, 0);
+            modily(1, h, l, r, 0, n - 1, 0);
         else if (op == 2)
-            modily(1, h, l - 1, r - 1, 0, n - 1, 1);
+            modily(1, h, l, r, 0, n - 1, 1);
     }
     query(1, 0, n - 1);
     return 0;
