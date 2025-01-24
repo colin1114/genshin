@@ -1,66 +1,59 @@
 #include <bits/stdc++.h>
 #define ll long long
-
 #define endl '\n'
+
+#define PII pair<ll, ll>
+#define x first
+#define y second
 
 using namespace std;
 const int E = 1e6 + 5;
-ll n, q, cnt;
+ll n, m;
+ll fa[E], dep[E];
+ll dp[101][E]; // dp need [1 << n][n] (that is min).
 vector<ll> edge[E];
-ll in[E], out[E];
-ll dp[101][E];
-inline void dfs(ll x, ll p = 0)
+inline void dfs(ll u, ll fa = 0)
 {
-    in[x] = ++cnt;
-    dp[0][x] = p;
-    for (int i = 1; i <= 20; i++)
-        dp[i][x] = dp[i - 1][dp[i - 1][x]];
-    for (auto u : edge[x])
-    {
-        if (u == p)
-            continue;
-        dfs(u, x);
-    }
-    out[x] = ++cnt;
+    dep[u] = dep[fa] + 1;
+    dp[0][u] = fa;
+    for (auto v : edge[u])
+        if (v != fa)
+            dfs(v, u);
 }
-inline bool check(ll x, ll y)
+inline void init()
 {
-    return in[x] <= in[y] && out[x] >= out[y];
-}
-inline ll LCA(ll a, ll b)
-{
-    if (check(a, b))
-        return a;
-    if (check(b, a))
-        return b;
-    for (int i = 20; i >= 0; i--)
-    {
-        if (dp[i][a] == 0)
-            continue;
-        if (!check(dp[i][a], b))
-            a = dp[i][a];
-    }
-    return dp[0][a];
-}
-int main()
-{
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
-    cin >> n >> q;
-    for (int i = 2; i <= n; i++)
+    // do something different, such as:
+    cin >> n >> m;
+    for (int i = 1; i < n; i++)
     {
         ll x, y;
         cin >> x >> y;
         edge[x].push_back(y);
         edge[y].push_back(x);
     }
+    // init.
     dfs(1);
-    while (q--)
-    {
-        ll x, y;
-        cin >> x >> y;
-        cout << LCA(x, y) << endl;
-    }
+    for (int i = 1; i <= 20; i++)
+        for (int j = 1; j <= n; j++)
+            dp[i][j] = dp[i][dp[i - 1][j]];
+}
+inline ll lca(ll x, ll y)
+{
+    // lca, can't change.
+    if (dep[x] < dep[y])
+        swap(x, y);
+    for (int i = 20; i >= 0; i--)
+        if (dep[dp[i][x]] >= dep[y])
+            x = dp[i][x];
+    if (x == y)
+        return x;
+    for (int i = 20; i >= 0; i--)
+        if (dp[i][x] != dp[i][y])
+            x = dp[i][x], y = dp[i][y];
+    return dp[0][x];
+}
+int main()
+{
+    // do something...
     return 0;
 }
