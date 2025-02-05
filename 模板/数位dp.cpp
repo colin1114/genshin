@@ -1,3 +1,6 @@
+// 数位 dp  wx 写法。
+// update on 2025-2-5 23:00.
+
 #include <bits/stdc++.h>
 #define ll long long
 #define endl '\n'
