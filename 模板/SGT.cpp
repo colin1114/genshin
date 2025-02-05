@@ -1,4 +1,4 @@
-// SGT 区间修改区间查询模板
+// SGT 区间修改区间查询模板（l, r 外置）
 // update on 2025-1-22.
 
 #include <bits/stdc++.h>

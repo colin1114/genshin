@@ -1,3 +1,6 @@
+// 另一种写法，将 l, r 内置在 node 中。
+// update on 2025-2-5.
+
 #include <bits/stdc++.h>
 #define endl '\n'
 #define ll long long

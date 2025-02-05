@@ -1,121 +1,62 @@
-#include <iostream>
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
+#include <bits/stdc++.h>
+#define endl '\n'
+#define ll long long
+
+#define PII pair<ll, ll>
+#define x first
+#define y second
+
 using namespace std;
-const int N = 3e6 + 5;
-struct Node
+const int E = 1e6 + 5;
+ll n, m, cnt, ans;
+ll dfn[E], low[E], sum[E];
+vector<ll> edge[E];
+inline void tarjan(ll u, ll fa)
 {
-    int lef;
-    int rig;
-    int maxn;
-    int lmax;
-    int rmax;
-    int aim;
-} Tree[N];
-void pushup(int now)
-{
-    Tree[now].maxn = max(max(Tree[now << 1].maxn, Tree[now << 1 | 1].maxn), Tree[now << 1].rmax + Tree[now << 1 | 1].lmax);
-    Tree[now].lmax = Tree[now << 1].lmax;
-    if (Tree[now << 1].lmax == Tree[now << 1].rig - Tree[now << 1].lef + 1)
-        Tree[now].lmax += Tree[now << 1 | 1].lmax;
-    Tree[now].rmax = Tree[now << 1 | 1].rmax;
-    if (Tree[now << 1 | 1].rmax == Tree[now << 1 | 1].rig - Tree[now << 1 | 1].lef + 1)
-        Tree[now].rmax += Tree[now << 1].rmax;
-}
-void build(int now, int l, int r)
-{
-    Tree[now].lef = l;
-    Tree[now].rig = r;
-    Tree[now].aim = -1;
-    if (l == r)
+    low[u] = dfn[u] = ++cnt;
+    for (auto v : edge[u])
     {
-        Tree[now].maxn = Tree[now].lmax = Tree[now].rmax = 1;
-        return;
-    }
-    int mid = l + r >> 1;
-    build(now << 1, l, mid);
-    build(now << 1 | 1, mid + 1, r);
-    pushup(now);
-}
-void pushdown(int now)
-{
-    if (Tree[now].aim != -1)
-    {
-        if (Tree[now].aim == 0)
+        if (!dfn[v])
         {
-            Tree[now << 1].maxn = Tree[now << 1].lmax = Tree[now << 1].rmax = Tree[now << 1].rig - Tree[now << 1].lef + 1;
-            Tree[now << 1 | 1].maxn = Tree[now << 1 | 1].lmax = Tree[now << 1 | 1].rmax = Tree[now << 1 | 1].rig - Tree[now << 1 | 1].lef + 1;
+            tarjan(v, u);
+            low[u] = min(low[v], low[u]);
+            if (low[v] >= dfn[u])
+                sum[u]++;
         }
-        else
-        {
-            Tree[now << 1].maxn = Tree[now << 1].lmax = Tree[now << 1].rmax = 0;
-            Tree[now << 1 | 1].maxn = Tree[now << 1 | 1].lmax = Tree[now << 1 | 1].rmax = 0;
-        }
-        Tree[now << 1].aim = Tree[now << 1 | 1].aim = Tree[now].aim;
-        Tree[now].aim = -1;
+        else if (v != fa)
+            low[u] = min(dfn[v], low[u]);
     }
-}
-void modify(int now, int l, int r, int x)
-{
-    if (l <= Tree[now].lef && Tree[now].rig <= r)
-    {
-        Tree[now].aim = x;
-        if (x == 1)
-            Tree[now].maxn = Tree[now].lmax = Tree[now].rmax = 0;
-        else
-            Tree[now].maxn = Tree[now].lmax = Tree[now].rmax = Tree[now].rig - Tree[now].lef + 1;
-        return;
-    }
-    pushdown(now);
-    int mid = Tree[now].lef + Tree[now].rig >> 1;
-    if (l <= mid)
-        modify(now << 1, l, r, x);
-    if (r > mid)
-        modify(now << 1 | 1, l, r, x);
-    pushup(now);
-}
-int query(int now, int x)
-{
-    pushdown(now);
-    if (Tree[now].maxn < x)
-        return Tree[now].rig - Tree[now].rmax + 1;
-    if (Tree[now << 1].maxn >= x)
-        return query(now << 1, x);
-    else if (Tree[now << 1].rmax + Tree[now << 1 | 1].lmax >= x)
-        return query(now << 1, x);
-    else if (Tree[now << 1 | 1].maxn >= x)
-        return query(now << 1 | 1, x);
 }
 int main()
 {
-    int n, m;
-    scanf("%d%d", &n, &m);
-    build(1, 1, n);
-    int cnt = 0;
-    for (int i = 1; i <= m; i++)
+    while (cin >> n >> m && !(n == 0 && m == 0))
     {
-        char op[2];
-        scanf("%s", op);
-        if (*op == 'A')
+        cnt = 0;
+        ll tot = 0;
+        for (int i = 0; i <= n; i++)
+            edge[i].clear();
+        memset(dfn, 0, sizeof dfn);
+        memset(low, 0, sizeof low);
+        memset(sum, 0, sizeof sum);
+        for (int i = 1; i <= m; i++)
         {
-            int x;
-            scanf("%d", &x);
-            if (Tree[1].maxn >= x)
+            ll x, y;
+            cin >> x >> y;
+            edge[x].push_back(y);
+            edge[y].push_back(x);
+        }
+        ans = -1e18;
+        ll cnt1 = 0;
+        for (int i = 0; i < n; i++)
+            if (!dfn[i])
             {
-                int left = query(1, x);
-                modify(1, left, left + x - 1, 1);
+                cnt1++;
+                tarjan(i, -1);
+                sum[i]--;
             }
-            else
-                cnt++;
-        }
-        else
-        {
-            int left;
-            int len;
-            scanf("%d%d", &left, &len);
-            modify(1, left, len, 0);
-        }
+        for (int i = 0; i < n; i++)
+            ans = max(ans, sum[i]);
+        cout << ans + cnt1 << endl;
     }
-    cout << cnt << endl;
+    return 0;
 }
