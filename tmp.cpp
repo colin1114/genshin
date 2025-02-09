@@ -1,95 +1,95 @@
-#include <bits/stdc++.h>
-#define endl '\n'
-#define ll long long
-
-#define PII pair<ll, ll>
-#define x first
-#define y second
-
+#include <iostream>
+#include <cstdio>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#include <cstring>
 using namespace std;
-const int E = 1e6 + 5;
-ll n;
-ll a[E];
-struct node
+typedef long long ll;
+const int inf = 1e9 + 7;
+inline int read()
 {
-    ll l, r, d, lazy;
-} ns[E << 2];
-inline void update(ll rt)
-{
-    ns[rt].d = ns[rt << 1].d + ns[rt << 1 | 1].d;
-}
-inline void push_down(ll rt)
-{
-    if (ns[rt].lazy == 0)
-        return;
-    ns[rt << 1].lazy += ns[rt].lazy;
-    ns[rt << 1].d += ns[rt].lazy * (ns[rt << 1].r - ns[rt << 1].l + 1);
-    ns[rt << 1 | 1].lazy += ns[rt].lazy;
-    ns[rt << 1 | 1].d += ns[rt].lazy * (ns[rt << 1 | 1].r - ns[rt << 1 | 1].l + 1);
-    ns[rt].lazy = 0;
-}
-inline void build(ll rt, ll l, ll r)
-{
-    ns[rt].l = l;
-    ns[rt].r = r;
-    if (l == r)
+    int p = 0, f = 1;
+    char c = getchar();
+    while (c < '0' || c > '9')
     {
-        ns[rt].d = a[l];
-        return;
+        if (c == '-')
+            f = -1;
+        c = getchar();
     }
-    ll mid = l + r >> 1;
-    build(rt << 1, l, mid);
-    build(rt << 1 | 1, mid + 1, r);
-    update(rt);
-}
-inline void modify(ll rt, ll l, ll r, ll v)
-{
-    push_down(rt);
-    if (ns[rt].l == l && ns[rt].r == r)
+    while (c >= '0' && c <= '9')
     {
-        ns[rt].lazy += v;
-        ns[rt].d += v * (ns[rt].r - ns[rt].l + 1);
-        return;
+        p = p * 10 + c - '0';
+        c = getchar();
     }
-    if (ns[rt << 1].r >= r)
-        modify(rt << 1, l, r, v);
-    else if (ns[rt << 1 | 1].l <= l)
-        modify(rt << 1 | 1, l, r, v);
-    else
-        modify(rt << 1, l, ns[rt << 1].r, v), modify(rt << 1 | 1, ns[rt << 1 | 1].l, r, v);
-    update(rt);
+    return f * p;
 }
-inline ll query(ll rt, ll l, ll r)
+const int maxn = 1503;
+struct Edge
 {
-    if (ns[rt].l == l && ns[rt].r == r)
-        return ns[rt].d;
-    push_down(rt);
-    ll mid = ns[rt].l + ns[rt].r >> 1;
-    if (ns[rt << 1].r >= r)
-        return query(rt << 1, l, r);
-    else if (ns[rt << 1 | 1].l <= l)
-        return query(rt << 1 | 1, l, r);
-    else
-        return query(rt << 1, l, mid) + query(rt << 1 | 1, mid + 1, r);
+    int from, to;
+} p[maxn << 1];
+int n, cnt, head[maxn << 1], val[maxn];
+int f[maxn][4];
+// 设状态f[x][0],f[x][1],f[x][2]分别表示
+// 对于x点,被自己覆盖,被自己的儿子覆盖,被自己的父亲覆盖时
+// 满足以x为根的子树所有点都被覆盖的最小代价
+inline void add_edge(int x, int y) // 加边
+{
+    cnt++;
+    p[cnt].from = head[x];
+    head[x] = cnt;
+    p[cnt].to = y;
+}
+inline void TreeDP(int x, int fa) // 树形DP
+{
+    f[x][0] = val[x]; // 初值:选择x点
+    int sum = 0, must_need_mincost = inf;
+    for (int i = head[x]; i; i = p[i].from)
+    {
+        int y = p[i].to;
+        if (y == fa)
+            continue;
+        TreeDP(y, x);
+        int t = min(f[y][0], f[y][1]);
+        f[x][0] += min(t, f[y][2]);
+        // 自己被自己覆盖:儿子怎么样都行
+        f[x][2] += t;
+        // 自己被父节点覆盖:儿子必须合法,要么选择儿子,要么是儿子被儿子的儿子覆盖
+        // 以下是对f[x][1]的转移，请好好理解
+        if (f[y][0] < f[y][1])
+            sum++;
+        // 如果选择儿子节点更优,选上,计数器sum++，证明选过f[y][0]
+        else
+            must_need_mincost = min(must_need_mincost, f[y][0] - f[y][1]);
+        // 否则记录一个最小的必须支付代价
+        // 因为最后要保证x点被y覆盖,必须要找差值最小的,这样才最优
+        f[x][1] += t; // 自己被儿子覆盖,那么儿子必须合法
+    }
+    if (!sum)
+        f[x][1] += must_need_mincost;
+    // 对于f[x][1]转移:如果一个f[y][0]都没选过,那么必须从差值最小的儿子里面选择一个
 }
 int main()
 {
-    ll n, m;
-    cin >> n >> m;
+    n = read();
     for (int i = 1; i <= n; i++)
-        cin >> a[i];
-    build(1, 1, n);
-    while (m--)
     {
-        ll op, l, r, v;
-        cin >> op >> l >> r;
-        if (op == 1)
+        int x = read();
+        val[x] = read();
+        int num = read();
+        while (num > 0)
         {
-            cin >> v;
-            modify(1, l, r, v);
+            int y = read();
+            add_edge(x, y);
+            add_edge(y, x);
+            num--;
         }
-        else
-            cout << query(1, l, r) << endl;
     }
+    TreeDP(1, 0);
+    cerr << f[1][0] << ' ' << f[1][1] << ' ' << f[1][2] << endl;
+    printf("%d", min(f[1][0], f[1][1]));
+    // 由于根节点没有父节点,最后答案就是min(f[1][0],f[1][1])
+    // 即1节点被自己覆盖或者被自己的儿子覆盖
     return 0;
 }
