@@ -324,4 +324,4 @@ int main()
     // cerr<<"Total time:"<<endtime<<endl;
     // system("pause");
     return 0;
-}   
+}
