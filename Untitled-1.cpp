@@ -1,93 +1,54 @@
-
 #include <bits/stdc++.h>
-#define endl '\n'
 #define ll long long
+#define endl '\n'
 
 using namespace std;
 const int E = 1e6 + 5;
-ll n, q;
-ll a[E];
+ll n, cnt;
+ll bit[E];
 struct node
 {
-    ll val;
-} tree[E << 2];
-inline void update(ll rt)
+    ll a, b, c;
+};
+inline void update(ll x, ll v) 
 {
-    tree[rt].val = __gcd(tree[rt * 2].val, tree[rt * 2 + 1].val);
+    for (ll i = x; i <= n; i += i & -i)
+        bit[i] = min(bit[i], v);
 }
-inline void build(ll rt, ll l, ll r)
+inline ll query(ll x) 
 {
-    if (l == r)
-    {
-        tree[rt].val = a[l];
-        return;
-    }
-    ll mid = l + r >> 1;
-    build(rt * 2, l, mid);
-    build(rt * 2 + 1, mid + 1, r);
-    update(rt);
+    ll res = 1e18;
+    for (ll i = x; i > 0; i -= i & -i)
+        res = min(res, bit[i]);
+    return res;
 }
-inline void update(ll rt, ll l, ll r, ll pos, ll val)
-{
-    if (l == r)
-    {
-        tree[rt].val = val;
-        return;
-    }
-    ll mid = l + r >> 1;
-    if (pos <= mid)
-        update(rt * 2, l, mid, pos, val);
-    else
-        update(rt * 2 + 1, mid + 1, r, pos, val);
-    update(rt);
-}
-inline ll query(ll rt, ll l, ll r, ll cl, ll cr, ll x)
-{
-    if (r < cl || l > cr)
-        return 0;
-    if (tree[rt].val % x == 0)
-        return 0;
-    if (l == r)
-        return 1;
-    ll mid = l + r >> 1;
-    ll p = query(rt * 2, l, mid, cl, cr, x);
-    if (p > 1)
-        return 2;
-    ll q = query(rt * 2 + 1, mid + 1, r, cl, cr, x);
-    ll sum = p + q;
-    return (sum > 1) ? 2 : sum;
-}
-int main()
-{
-    freopen("math.in", "r", stdin);
-    freopen("math.out", "w", stdout);
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
+int main(){
     cin >> n;
-    for (int i = 1; i <= n; i++)
-        cin >> a[i];
-    build(1, 1, n);
-    ll q;
-    cin >> q;
-    while (q--)
-    {
-        ll op, l, r, x;
-        cin >> op;
-        if (op == 1)
-        {
-            cin >> l >> r >> x;
-            ll v = query(1, 1, n, l, r, x);
-            if (v <= 1)
-                cout << "YES" << endl;
-            else
-                cout << "NO" << endl;
-        }
-        else
-        {
-            cin >> l >> x;
-            update(1, 1, n, l, x);
-        }
+    vector<node> t(n + 1);
+    ll x;
+    for (int i = 1; i <= n; i++) {
+        cin >> x;
+        t[x - 1].a = i;
     }
+    for (int i = 1; i <= n; i++) {
+        cin >> x;
+        t[x - 1].b = i;
+    }
+    for (int i = 1; i <= n; i++) {
+        cin >> x;
+        t[x - 1].c = i;
+    }
+    sort(t.begin(), t.begin() + n, [&](const node& x, const node& y) {
+        return x.a < y.a;
+    });
+    fill(bit + 1, bit + n + 1, 1e18);
+    ll ans = 0;
+    for (int i = 1; i <= n; i++) {
+        ll x = query(t[i].b);
+        if (x > t[i].c) 
+            ans++;
+        update(t[i].b + 1, t[i].c);
+    }
+    cout << ans << endl;
     return 0;
 }
