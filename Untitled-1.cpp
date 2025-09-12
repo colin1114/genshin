@@ -11,7 +11,16 @@ struct opera
 	{
         fill(a, a + 105, 0);
     }
-    opera operator + (opera &s) const
+    opera(ll s)
+    {
+        fill(a, a + 105, 0);
+        while (s)
+        {
+            a[++a[0]] = s % 10;
+            s /= 10;
+        }
+    }
+    opera operator + (const opera &s) const
 	{
         opera c;
         c.a[0] = max(a[0], s.a[0]);
@@ -24,7 +33,7 @@ struct opera
 			c.a[0]++;
         return c;
     }
-    opera operator * (opera &s) const
+    opera operator * (const opera &s) const
 	{
         opera c;
         c.a[0] = a[0] + s.a[0] - 1;
@@ -38,12 +47,11 @@ struct opera
 	        }
         while (c.a[c.a[0] + 1]) 
 			c.a[++c.a[0] + 1] += c.a[c.a[0]] / 10, c.a[c.a[0]] %= 10;
-        
         return c;
     }
-    bool operator >(opera &s) const
+    bool operator > (const opera &s) const
 	{
-        if (a[0] > s.a[0]) 
+        if (a[0] > s.a[0])
 			return 1;
         if (a[0] < s.a[0]) 
 			return 0;
@@ -59,10 +67,18 @@ struct opera
     void print() 
 	{
         for (int i = a[0]; i >= 1; i--) 
-			cout << (ll)a[i];
+			cout << a[i];
         cout << endl;
     }
 };
+// inline void change(opera &x, ll s) 
+// {
+//     while (s) 
+// 	{
+//         x.a[++x.a[0]] = s % 10;
+//         s /= 10;
+//     }
+// }
 struct node 
 {
     vector<ll> v;
@@ -71,17 +87,17 @@ struct node
 };
 inline opera calc(const vector<ll>& v) 
 {
-    oprea ans;
-    change(ans, 1);
+    opera ans;
+    ans = 1;
     for (size_t i = 0; i < v.size(); i++) 
     {
         opera o;
-        change(o, 0);
+        o = 0;
         ll t = v[i] - i;
         if (t <= 0) 
             return o;
-        change(o, t);
-        ans *= o;
+        o = t;
+        ans = ans * o;
     }
     return ans;
 }
@@ -91,17 +107,20 @@ inline bool cmp(const node& a, const node& b)
         return 0;
     if (a.flag && !b.flag) 
         return 1;
-    if (!a.flag &&  b.flag) 
+    if (!a.flag && b.flag) 
         return 0;
     return a.x > b.x;
 }
+
 int main() 
 {
+    freopen("ball.in", "r", stdin);
+    freopen("ball.out", "w", stdout);
     cin >> n >> m >> k;
     vector<ll> a(n + 1);
     for (int i = 1; i <= n; i++) 
         cin >> a[i];
-    vector<vector<node>> dp(n+1, vector<node>(m+1));
+    vector<vector<node>> dp(n + 1, vector<node>(m + 1));
     dp[0][0].flag = 1;
     dp[0][0].v.clear();
     dp[0][0].x = 1;
@@ -110,11 +129,11 @@ int main()
         dp[i][0] = dp[i - 1][0]; 
         for (ll j = 1; j <= m; j++) 
         {
-            dp[i][j] = dp[i-1][j];
+            dp[i][j] = dp[i - 1][j];
             ll s = max(0LL, i - k);
             if (dp[s][j - 1].flag) 
             {
-                node node_ = dp[s][j-1];
+                node node_ = dp[s][j - 1];
                 auto it = lower_bound(node_.v.begin(), node_.v.end(), a[i]);
                 node_.v.insert(it, a[i]);
                 node_.x = calc(node_.v);
@@ -128,7 +147,7 @@ int main()
     for (int i = 1; i <= m; i++)
         if (cmp(dp[n][i], ans)) 
             ans = dp[n][i];
-    cout << ans.x << endl;
+    ans.x.print();
     return 0;
 }
 
