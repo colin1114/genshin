@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  z2api:
+    image: ghcr.io/oldjs/z2api:docker
+    container_name: z2api-server
+    ports:
+      - "8000:8000"
+    environment:
+      # 服务器设置
+      - HOST=${HOST:-0.0.0.0}
+      - PORT=${PORT:-8000}
+
+      # 外部认证密钥
+      - API_KEY=Qcolin1421
+
+      # 内容过滤与显示
+      - SHOW_THINK_TAGS=false
+
+      # 响应模式
+      - DEFAULT_STREAM=true
+
+      # Z.AI 用户令牌（必须从 https://chat.z.ai 获取 JWT）
+      - Z_AI_COOKIES=${Z_AI_COOKIES}  # 请在运行时通过命令传入或使用 .env 文件
+
+      # 速率限制
+      - MAX_REQUESTS_PER_MINUTE=${MAX_REQUESTS_PER_MINUTE:-60}
+
+      # 日志级别
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+      # 自动刷新（暂未实现）
+      - AUTO_REFRESH_TOKENS=false
+      - REFRESH_CHECK_INTERVAL=3600
+    volumes:
+      - logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - z2api-network
+
+networks:
+  z2api-network:
+    driver: bridge
+
+volumes:
+  logs:
+    driver: local
