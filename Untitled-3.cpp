@@ -4,78 +4,87 @@
 
 using namespace std;
 const int E = 1e6 + 5;
-ll n, ans;
-ll a[E], dep[E], in[E], out[E];
-vector<ll> edge[E];
-inline void init(ll u, ll fa)
-{
-    dep[u] = dep[fa] + 1;
-    for (auto v : edge[u])
-        if (v != fa)
-            init(v, u);
-}
-inline void dfs(ll u, ll fa, ll tim, ll stp, ll life)
-{
-    // cerr << "id: " << u << ", pre: " << fa << ", time: " << tim << ", dep: " << dep[u] << ", step: " << stp << ", life: " << life << ", will " << (a[u] > 0 ? '-' : '+') << ' ' << 1 << " life" << endl;
-    if (dep[u] <= tim)
-    {
-        // cerr << "ok stp = " << stp << endl;
-        // cerr << "exit signel: 1\n";
-        // cerr << endl;
-        ans = max(ans, stp);
-        return;
-    }
-    life += a[u];
-    if (life <= 0)
-    {
-        ans = max(ans, stp);
-        // cerr << "ok stp = " << stp << endl;
-        // cerr << "exit signel: 2\n";
-        return;
-    }
-    for (auto v : edge[u])
-        dfs(v, u, tim + 1, stp + 1, life);
-}
+ll t, n;
 int main()
 {
-    freopen("vol.in", "r", stdin);
-    freopen("vol.out", "w", stdout);
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
-    cin >> n;
-    for (int i = 1; i <= n; i++)
-        cin >> a[i];
-    for (int i = 1; i < n; i++)
+    cin >> t;
+    while (t--)
     {
-        ll u, v;
-        cin >> u >> v;
-        edge[u].push_back(v);
-        in[u]++;
-        out[v]++;
-        edge[v].push_back(u);
-    }
-    ll cnt = 0, cnt1 = 0;
-    for (int i = 1; i <= n; i++)
-    {
-        if (in[i] == 1)
-            cnt++;
-        if (out[i] == 1)
-            cnt1++;
-    }
-    init(1, 0);
-    for (int i = 1; i <= n; i++)
-        cerr << --dep[i] << ' ';
-    if (cnt == n - 2 && cnt1 == n - 2)
-    {
-        
-    }
-    for (int i = 1; i <= n; i++)
-    {
-        // cerr << i << endl;
-        ans = 0;
-        dfs(i, 0, 0, 0, 1);
+        cin >> n;
+        vector<ll> a(n + 1);
+        for (int i = 1; i <= n; i++)
+            cin >> a[i];
+        ll all_gcd = a[1];
+        for (int i = 2; i <= n; i++)
+            all_gcd = __gcd(all_gcd, a[i]);
+        // cerr << all_gcd << endl;
+        ll ans = 0;
+        bool flag = 0;
+        for (int i = 1; i <= n; i++)
+            if (a[i] == all_gcd)
+            {
+                flag = 1;
+                break;
+            }
+        if (flag)
+        {
+            for (int i = 1; i <= n; i++)
+                if (a[i] != all_gcd)
+                    ans++;
+            cout << ans << endl;
+            continue;
+        }
+        for (int i = 1; i <= n; i++)
+            for (int j = i + 1; j <= n; j++)
+                if (__gcd(a[i], a[j]) == all_gcd)
+                {
+                    flag = 1;
+                    break;
+                }
+        if (flag)
+        {
+            cout << n << endl;
+            continue;
+        }
+        ll max1 = 0, min1 = 1e18, p = 0, q = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            
+            for (int j = i + 1; j <= n; j++)
+                if (__gcd(a[i], a[j]) == all_gcd)
+                {
+                    ans++;
+                    a[i] = all_gcd;
+                    goto con;
+                }
+            for (int j = 1; j <= n; j++)
+                if (__gcd(a[p], a[j]) == all_gcd && p != j)
+                {
+                    ans++;
+                    a[p] = all_gcd;
+                    goto con;
+                }
+            max1 = 0, min1 = 1e18;
+            for (int j = 1; j <= n; j++)
+            {
+                if (a[j] > max1)
+                    p = j, max1 = a[j];
+                if (a[j] < min1)
+                    q = j, min1 = a[j];
+            }
+            // cerr << p << ' ' << q << endl;
+            a[p] = __gcd(a[p], a[q]);
+            // for (int j = 1; j <= n; j++)
+            //     cerr << a[j] << ' ';
+            // cerr << endl;
+            ans++;
+        }
+        con:;
+        for (int i = 1; i <= n; i++)
+            if (a[i] != all_gcd)
+                ans++;
         cout << ans << endl;
     }
     return 0;
 }
+
