@@ -48,7 +48,7 @@ int main()
         }
         ll max1 = 0, min1 = 1e18, p = 0, q = 0;
         for (int i = 1; i <= n; i++)
-        {
+        { 
             
             for (int j = i + 1; j <= n; j++)
                 if (__gcd(a[i], a[j]) == all_gcd)
